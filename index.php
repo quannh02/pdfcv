@@ -10,26 +10,27 @@
 
 require_once("fpdf.php");
 
+
 // Begin configuration
 
-$textColour = array( 0, 0, 0 );
-$headerColour = array( 100, 100, 100 );
-$tableHeaderTopTextColour = array( 255, 255, 255 );
-$tableHeaderTopFillColour = array( 125, 152, 179 );
-$tableHeaderTopProductTextColour = array( 0, 0, 0 );
-$tableHeaderTopProductFillColour = array( 143, 173, 204 );
-$tableHeaderLeftTextColour = array( 99, 42, 57 );
-$tableHeaderLeftFillColour = array( 184, 207, 229 );
-$tableBorderColour = array( 50, 50, 50 );
-$tableRowFillColour = array( 213, 170, 170 );
+$textColour = array(0, 0, 0);
+$headerColour = array(100, 100, 100);
+$tableHeaderTopTextColour = array(255, 255, 255);
+$tableHeaderTopFillColour = array(125, 152, 179);
+$tableHeaderTopProductTextColour = array(0, 0, 0);
+$tableHeaderTopProductFillColour = array(143, 173, 204);
+$tableHeaderLeftTextColour = array(99, 42, 57);
+$tableHeaderLeftFillColour = array(184, 207, 229);
+$tableBorderColour = array(50, 50, 50);
+$tableRowFillColour = array(213, 170, 170);
 $reportName = "2009 Widget Sales Report";
 $reportNameYPos = 160;
-$logoFile = "elephant.png";
-$logoXPos = 50;
-$logoYPos = 108;
-$logoWidth = 110;
-$columnLabels = array( "Q1", "Q2", "Q3", "Q4" );
-$rowLabels = array( "SupaWidget", "WonderWidget", "MegaWidget", "HyperWidget" );
+$logoFile = 'anhcanhan.jpg';
+$logoXPos = 151;
+$logoYPos = 40;
+$logoWidth = 50;
+$columnLabels = array("Q1", "Q2", "Q3", "Q4");
+$rowLabels = array("SupaWidget", "WonderWidget", "MegaWidget", "HyperWidget");
 $chartXPos = 20;
 $chartYPos = 250;
 $chartWidth = 160;
@@ -39,194 +40,176 @@ $chartYLabel = "2009 Sales";
 $chartYStep = 20000;
 
 $chartColours = array(
-    array( 255, 100, 100 ),
-    array( 100, 255, 100 ),
-    array( 100, 100, 255 ),
-    array( 255, 255, 100 ),
+    array(255, 100, 100),
+    array(100, 255, 100),
+    array(100, 100, 255),
+    array(255, 255, 100),
 );
 
 $data = array(
-    array( 9940, 10100, 9490, 11730 ),
-    array( 19310, 21140, 20560, 22590 ),
-    array( 25110, 26260, 25210, 28370 ),
-    array( 27650, 24550, 30040, 31980 ),
+    array(9940, 10100, 9490, 11730),
+    array(19310, 21140, 20560, 22590),
+    array(25110, 26260, 25210, 28370),
+    array(27650, 24550, 30040, 31980),
 );
 
 // End configuration
 
 
 /**
-Create the title page
+ * Create the title page
  **/
 
-$pdf = new FPDF( 'P', 'mm', 'A4' );
-$pdf->SetTextColor( $textColour[0], $textColour[1], $textColour[2] );
-$pdf->AddPage();
-
-// Logo
-$pdf->Image( $logoFile, $logoXPos, $logoYPos, $logoWidth );
-
-// Report Name
-$pdf->SetFont( 'Arial', 'B', 24 );
-$pdf->Ln( $reportNameYPos );
-$pdf->Cell( 0, 15, $reportName, 0, 0, 'C' );
-
+/** @var FPDF $pdf */
+$pdf = new FPDF('P', 'mm', 'A4');
+$pdf->SetTextColor($textColour[0], $textColour[1], $textColour[2]);
 
 /**
-Create the page header, main heading, and intro text
+ * Create the page header, main heading, and intro text
  **/
 
 $pdf->AddPage();
-$pdf->SetTextColor( $headerColour[0], $headerColour[1], $headerColour[2] );
-$pdf->SetFont( 'Arial', '', 17 );
-$pdf->Cell( 0, 15, 'Nguyen Hong Quan', 0, 0, 'C' );
-$pdf->SetTextColor( $textColour[0], $textColour[1], $textColour[2] );
-$pdf->SetFont( 'Arial', '', 20 );
-$pdf->Write( 19, "PHP Developer|Teamlead" );
-$pdf->Ln( 16 );
-$pdf->SetFont( 'Arial', '', 20 );
-$pdf->Write( 19, "Objective" );
-$pdf->Ln( 16 );
-$pdf->SetFont( 'Arial', '', 12 );
-$pdf->Write( 6, "To be a good staff. Try to learning as much as possible and doing my best in order to accompish my task. To have good opportunities to get promotion in my job. Develop my skills with development of company, I always want to prove myself" );
-$pdf->Ln( 12 );
-$pdf->SetFont( 'Arial', '', 20 );
-$pdf->Write( 19, "Education" );
-$pdf->Ln( 16 );
-$pdf->SetFont( 'Arial', '', 12 );
-$pdf->Write( 6, "WATER UNIVERSITY INFORMATION TECHNOLOGY AT HA NOI CITY" );
-$pdf->Ln( 12 );
-$pdf->SetFont( 'Arial', '', 12 );
-$pdf->Write( 6, "Major: Software Engineering" );
-$pdf->Ln( 12 );
-
-
 /**
-Create the table
- **/
-
-$pdf->SetDrawColor( $tableBorderColour[0], $tableBorderColour[1], $tableBorderColour[2] );
-$pdf->Ln( 15 );
-
-// Create the table header row
-$pdf->SetFont( 'Arial', 'B', 15 );
-
-// "PRODUCT" cell
-$pdf->SetTextColor( $tableHeaderTopProductTextColour[0], $tableHeaderTopProductTextColour[1], $tableHeaderTopProductTextColour[2] );
-$pdf->SetFillColor( $tableHeaderTopProductFillColour[0], $tableHeaderTopProductFillColour[1], $tableHeaderTopProductFillColour[2] );
-$pdf->Cell( 46, 12, " PRODUCT", 1, 0, 'L', true );
-
-// Remaining header cells
-$pdf->SetTextColor( $tableHeaderTopTextColour[0], $tableHeaderTopTextColour[1], $tableHeaderTopTextColour[2] );
-$pdf->SetFillColor( $tableHeaderTopFillColour[0], $tableHeaderTopFillColour[1], $tableHeaderTopFillColour[2] );
-
-for ( $i=0; $i<count($columnLabels); $i++ ) {
-    $pdf->Cell( 36, 12, $columnLabels[$i], 1, 0, 'C', true );
+ * @param $pdf
+ * @param $textColour
+ * @param $tableRowFillColour
+ */
+function addHeader($pdf, $textColour, $tableRowFillColour)
+{
+    $pdf->SetFont('Arial', 'B', 20);
+    $pdf->SetTextColor(204, 0, 0);
+    $pdf->SetFillColor(255, 148, 77);
+    $pdf->Cell(100, 15, "", 0, 0, 'L', true);
+    $pdf->SetFillColor(255, 148, 77);
+    $pdf->Cell(91, 15, " NGUYEN HONG QUAN", 0, 0, 'L', true);
+    $pdf->SetFillColor(255, 148, 77);
+    $pdf->Ln(15);
+    $pdf->SetTextColor($textColour[0], $textColour[1], $textColour[2]);
+    $pdf->SetFont('Arial', '', 15);
+    $pdf->Cell(110, 5, "", 0, 0, 'L', true);
+    $pdf->Cell(81, 5, "PHP Developer | Teamlead", 0, 0, 'L', true);
+    $pdf->Ln(5);
+    $pdf->Cell(191, 5, "", 0, 0, 'L', true);
 }
 
-$pdf->Ln( 12 );
+$pdf->Image( $logoFile, $logoXPos, $logoYPos, $logoWidth);
 
-// Create the table data rows
+addHeader($pdf, $textColour, $tableRowFillColour);
+/**
+ * @param $pdf
+ * @param $tableRowFillColour
+ */
+function addObjective($pdf, $tableRowFillColour)
+{
+    $pdf->SetFont('Arial', '', 20);
+    $text = "To be a good staff. Try to learning as much as possible and doing my best in order to accompish my task. To have good opportunities to get promotion in my job. Develop my skills with development of company, I always want to prove myself";
 
-$fill = false;
-$row = 0;
+    $pdf->Ln(5);
+    $pdf->SetFillColor(153, 153, 102); // #999966
+    $pdf->SetTextColor(255, 255, 255); // #ffffff
+    $pdf->SetFont('Arial', '', 15);
 
-foreach ( $data as $dataRow ) {
+    $pdf->Cell(145, 235, "", 0, 0, 'L', true);
+    $pdf->Cell(46, 10, "", 0, 0, 'L', true);
 
-    // Create the left header cell
-    $pdf->SetFont( 'Arial', 'B', 15 );
-    $pdf->SetTextColor( $tableHeaderLeftTextColour[0], $tableHeaderLeftTextColour[1], $tableHeaderLeftTextColour[2] );
-    $pdf->SetFillColor( $tableHeaderLeftFillColour[0], $tableHeaderLeftFillColour[1], $tableHeaderLeftFillColour[2] );
-    $pdf->Cell( 46, 12, " " . $rowLabels[$row], 1, 0, 'L', $fill );
-
-    // Create the data cells
-    $pdf->SetTextColor( $textColour[0], $textColour[1], $textColour[2] );
-    $pdf->SetFillColor( $tableRowFillColour[0], $tableRowFillColour[1], $tableRowFillColour[2] );
-    $pdf->SetFont( 'Arial', '', 15 );
-
-    for ( $i=0; $i<count($columnLabels); $i++ ) {
-        $pdf->Cell( 36, 12, ( '$' . number_format( $dataRow[$i] ) ), 1, 0, 'C', $fill );
-    }
-
-    $row++;
-    $fill = !$fill;
-    $pdf->Ln( 12 );
+    $pdf->Ln(6);
+    $pdf->Write(10, "Objective");
+    $pdf->Ln(16);
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->MultiCell(140, 6, $text, 0, 'L', false);
+    $pdf->Ln(9);
+    $pdf->Cell(145, 0, "", 0, 0, 'L', true);
+    $pdf->SetFillColor(153, 102, 51);
+    $pdf->Cell(46, 180, "", 0, 0, 'L', true);
 }
+
+addObjective($pdf, $tableRowFillColour);
+$pdf->Ln(12);
+/**
+ * @param $pdf
+ */
+function addEducation($pdf)
+{
+    $pdf->SetFont('Arial', '', 20);
+    $pdf->Write(10, "Education");
+    $pdf->Ln(10);
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->Write(6, "THUYLOI UNIVERSITY AT HA NOI CITY");
+    $pdf->Ln(6);
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->Write(6, "Major: Software Engineering");
+}
+
+addEducation($pdf);
+
+$pdf->Ln(12);
+$pdf->SetFont('Arial', '', 20);
+$pdf->Write(10, "Work Experience");
+/**
+ * @param $pdf
+ */
+function addExperience($pdf, $params)
+{
+
+    $pdf->Ln(16);
+    $pdf->SetFont('Arial', '', 20);
+    $pdf->Write(10, $params['company']);
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->Write(10, "                        ");
+    $pdf->Write(10, $params['time']);
+    $pdf->Ln(10);
+    $pdf->Write(10, "Main responsibilities:");
+    $pdf->Ln(10);
+    $pdf->SetFont('Arial', '', 12);
+    $vicomageText = $params['context'];
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->MultiCell(140, 6, $vicomageText, 0, 'L', false);
+}
+
+$params = [
+    'company' => 'Vicomage',
+    'time' => 'May 2018 - October 2018',
+    'context' =>  'Working with foreigner customer. At that time, I was a web developer with skills PHP(Laravel Framework), Javascript(Jquery, Knockoutjs), Flatform(Magento 1 + 2), CMS(Wordpress). Here, almost tasks are collecting requirements, discussion with customers, technology suggestions to streamline  the work, develop company\'s idea to market segments to test ideas in real context. Especially, I have chance to study and work with new technologies to achieve possible approachs for product environment. They are really challenge for me but i really enjoy to do them. Js is my programming language\'s favorite. Becoming a JS full stack developer is my desire, I\'m try my best to make it out.'
+];
+
+addExperience($pdf, $params);
+
+$pdf->Ln(12);
+
+$pdf->SetFillColor(153, 153, 102); // #999966
+$pdf->SetTextColor(255, 255, 255);
+$pdf->Cell(145, 238, "", 0, 0, 'L', true);
+
+$pdf->SetFillColor(153, 102, 51); // #999966
+$pdf->SetTextColor(255, 255, 255);
+
+$pdf->Cell(46, 238, "", 0, 0, 'L', true);
+$params = [
+    'company' => 'Wsoftpro',
+    'time' => 'May 2017 - May 2018',
+    'context' =>  'Working with foreigner customer. At that time, I was a web developer with skills PHP(Laravel Framework), Javascript(Jquery), CMS(Wordpress), Flatform(Magento 1).'
+];
+
+addExperience($pdf, $params);
+$pdf->Ln(12);
+
+$params = [
+    'company' => 'Osworlds',
+    'time' => 'August 2016 - May 2017',
+    'context' =>  'Working with foreigner customer. At that time, I was a web developer with skills PHP(Laravel Framework), Javascript(Jquery), CMS(Wordpress), Flatform(Magento 1).'
+];
+
+addExperience($pdf, $params);
+
+// Create the left header cell
+$pdf->SetFont('Arial', 'B', 15);
+$pdf->SetTextColor($tableHeaderLeftTextColour[0], $tableHeaderLeftTextColour[1], $tableHeaderLeftTextColour[2]);
 
 
 /***
-Create the chart
+ * Serve the PDF
  ***/
 
-// Compute the X scale
-$xScale = count($rowLabels) / ( $chartWidth - 40 );
-
-// Compute the Y scale
-
-$maxTotal = 0;
-
-foreach ( $data as $dataRow ) {
-    $totalSales = 0;
-    foreach ( $dataRow as $dataCell ) $totalSales += $dataCell;
-    $maxTotal = ( $totalSales > $maxTotal ) ? $totalSales : $maxTotal;
-}
-
-$yScale = $maxTotal / $chartHeight;
-
-// Compute the bar width
-$barWidth = ( 1 / $xScale ) / 1.5;
-
-// Add the axes:
-
-$pdf->SetFont( 'Arial', '', 10 );
-
-// X axis
-$pdf->Line( $chartXPos + 30, $chartYPos, $chartXPos + $chartWidth, $chartYPos );
-
-for ( $i=0; $i < count( $rowLabels ); $i++ ) {
-    $pdf->SetXY( $chartXPos + 40 +  $i / $xScale, $chartYPos );
-    $pdf->Cell( $barWidth, 10, $rowLabels[$i], 0, 0, 'C' );
-}
-
-// Y axis
-$pdf->Line( $chartXPos + 30, $chartYPos, $chartXPos + 30, $chartYPos - $chartHeight - 8 );
-
-for ( $i=0; $i <= $maxTotal; $i += $chartYStep ) {
-    $pdf->SetXY( $chartXPos + 7, $chartYPos - 5 - $i / $yScale );
-    $pdf->Cell( 20, 10, '$' . number_format( $i ), 0, 0, 'R' );
-    $pdf->Line( $chartXPos + 28, $chartYPos - $i / $yScale, $chartXPos + 30, $chartYPos - $i / $yScale );
-}
-
-// Add the axis labels
-$pdf->SetFont( 'Arial', 'B', 12 );
-$pdf->SetXY( $chartWidth / 2 + 20, $chartYPos + 8 );
-$pdf->Cell( 30, 10, $chartXLabel, 0, 0, 'C' );
-$pdf->SetXY( $chartXPos + 7, $chartYPos - $chartHeight - 12 );
-$pdf->Cell( 20, 10, $chartYLabel, 0, 0, 'R' );
-
-// Create the bars
-$xPos = $chartXPos + 40;
-$bar = 0;
-
-foreach ( $data as $dataRow ) {
-
-    // Total up the sales figures for this product
-    $totalSales = 0;
-    foreach ( $dataRow as $dataCell ) $totalSales += $dataCell;
-
-    // Create the bar
-    $colourIndex = $bar % count( $chartColours );
-    $pdf->SetFillColor( $chartColours[$colourIndex][0], $chartColours[$colourIndex][1], $chartColours[$colourIndex][2] );
-    $pdf->Rect( $xPos, $chartYPos - ( $totalSales / $yScale ), $barWidth, $totalSales / $yScale, 'DF' );
-    $xPos += ( 1 / $xScale );
-    $bar++;
-}
-
-
-/***
-Serve the PDF
- ***/
-
-$pdf->Output( "report.pdf", "I" );
+$pdf->Output("PHP_NguyenHongQuan.pdf", "I");
 
 ?>
