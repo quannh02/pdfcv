@@ -91,6 +91,7 @@ function addHeader($pdf, $textColour, $tableRowFillColour)
     $pdf->Ln(5);
     $pdf->Cell(191, 5, "", 0, 0, 'L', true);
 }
+$pdf->Ln(6);
 
 $pdf->Image( $logoFile, $logoXPos, $logoYPos, $logoWidth);
 
@@ -117,14 +118,17 @@ function addObjective($pdf, $tableRowFillColour)
     $pdf->Ln(16);
     $pdf->SetFont('Arial', '', 12);
     $pdf->MultiCell(140, 6, $text, 0, 'L', false);
-    $pdf->Ln(9);
+    $pdf->Ln(0);
     $pdf->Cell(145, 0, "", 0, 0, 'L', true);
     $pdf->SetFillColor(153, 102, 51);
-    $pdf->Cell(46, 180, "", 0, 0, 'L', true);
+    $pdf->Cell(46, 10, "Skills", 0, 0, 'L', true);
 }
 
 addObjective($pdf, $tableRowFillColour);
 $pdf->Ln(12);
+
+
+
 /**
  * @param $pdf
  */
