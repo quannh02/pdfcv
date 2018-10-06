@@ -1,219 +1,116 @@
 <?php
-
-/*
-  An Example PDF Report Using FPDF
-  by Matt Doyle
-
-  From "Create Nice-Looking PDFs with PHP and FPDF"
-  http://www.elated.com/articles/create-nice-looking-pdfs-php-fpdf/
-*/
-
-require_once("fpdf.php");
-
-
-// Begin configuration
-
-$textColour = array(0, 0, 0);
-$headerColour = array(100, 100, 100);
-$tableHeaderTopTextColour = array(255, 255, 255);
-$tableHeaderTopFillColour = array(125, 152, 179);
-$tableHeaderTopProductTextColour = array(0, 0, 0);
-$tableHeaderTopProductFillColour = array(143, 173, 204);
-$tableHeaderLeftTextColour = array(99, 42, 57);
-$tableHeaderLeftFillColour = array(184, 207, 229);
-$tableBorderColour = array(50, 50, 50);
-$tableRowFillColour = array(213, 170, 170);
-$reportName = "2009 Widget Sales Report";
-$reportNameYPos = 160;
-$logoFile = 'anhcanhan.jpg';
-$logoXPos = 151;
-$logoYPos = 40;
-$logoWidth = 50;
-$columnLabels = array("Q1", "Q2", "Q3", "Q4");
-$rowLabels = array("SupaWidget", "WonderWidget", "MegaWidget", "HyperWidget");
-$chartXPos = 20;
-$chartYPos = 250;
-$chartWidth = 160;
-$chartHeight = 80;
-$chartXLabel = "Product";
-$chartYLabel = "2009 Sales";
-$chartYStep = 20000;
-
-$chartColours = array(
-    array(255, 100, 100),
-    array(100, 255, 100),
-    array(100, 100, 255),
-    array(255, 255, 100),
-);
-
-$data = array(
-    array(9940, 10100, 9490, 11730),
-    array(19310, 21140, 20560, 22590),
-    array(25110, 26260, 25210, 28370),
-    array(27650, 24550, 30040, 31980),
-);
-
-// End configuration
-
-
-/**
- * Create the title page
- **/
-
-/** @var FPDF $pdf */
-$pdf = new FPDF('P', 'mm', 'A4');
-$pdf->SetTextColor($textColour[0], $textColour[1], $textColour[2]);
-
-/**
- * Create the page header, main heading, and intro text
- **/
-
-$pdf->AddPage();
-/**
- * @param $pdf
- * @param $textColour
- * @param $tableRowFillColour
- */
-function addHeader($pdf, $textColour, $tableRowFillColour)
-{
-    $pdf->SetFont('Arial', 'B', 20);
-    $pdf->SetTextColor(204, 0, 0);
-    $pdf->SetFillColor(255, 148, 77);
-    $pdf->Cell(100, 15, "", 0, 0, 'L', true);
-    $pdf->SetFillColor(255, 148, 77);
-    $pdf->Cell(91, 15, " NGUYEN HONG QUAN", 0, 0, 'L', true);
-    $pdf->SetFillColor(255, 148, 77);
-    $pdf->Ln(15);
-    $pdf->SetTextColor($textColour[0], $textColour[1], $textColour[2]);
-    $pdf->SetFont('Arial', '', 15);
-    $pdf->Cell(110, 5, "", 0, 0, 'L', true);
-    $pdf->Cell(81, 5, "PHP Developer | Teamlead", 0, 0, 'L', true);
-    $pdf->Ln(5);
-    $pdf->Cell(191, 5, "", 0, 0, 'L', true);
-}
-$pdf->Ln(6);
-
-$pdf->Image( $logoFile, $logoXPos, $logoYPos, $logoWidth);
-
-addHeader($pdf, $textColour, $tableRowFillColour);
-/**
- * @param $pdf
- * @param $tableRowFillColour
- */
-function addObjective($pdf, $tableRowFillColour)
-{
-    $pdf->SetFont('Arial', '', 20);
-    $text = "To be a good staff. Try to learning as much as possible and doing my best in order to accompish my task. To have good opportunities to get promotion in my job. Develop my skills with development of company, I always want to prove myself";
-
-    $pdf->Ln(5);
-    $pdf->SetFillColor(153, 153, 102); // #999966
-    $pdf->SetTextColor(255, 255, 255); // #ffffff
-    $pdf->SetFont('Arial', '', 15);
-
-    $pdf->Cell(145, 235, "", 0, 0, 'L', true);
-    $pdf->Cell(46, 10, "", 0, 0, 'L', true);
-
-    $pdf->Ln(6);
-    $pdf->Write(10, "Objective");
-    $pdf->Ln(16);
-    $pdf->SetFont('Arial', '', 12);
-    $pdf->MultiCell(140, 6, $text, 0, 'L', false);
-    $pdf->Ln(0);
-    $pdf->Cell(145, 0, "", 0, 0, 'L', true);
-    $pdf->SetFillColor(153, 102, 51);
-    $pdf->Cell(46, 10, "Skills", 0, 0, 'L', true);
-}
-
-addObjective($pdf, $tableRowFillColour);
-$pdf->Ln(12);
-
-
-
-/**
- * @param $pdf
- */
-function addEducation($pdf)
-{
-    $pdf->SetFont('Arial', '', 20);
-    $pdf->Write(10, "Education");
-    $pdf->Ln(10);
-    $pdf->SetFont('Arial', '', 12);
-    $pdf->Write(6, "THUYLOI UNIVERSITY AT HA NOI CITY");
-    $pdf->Ln(6);
-    $pdf->SetFont('Arial', '', 12);
-    $pdf->Write(6, "Major: Software Engineering");
-}
-
-addEducation($pdf);
-
-$pdf->Ln(12);
-$pdf->SetFont('Arial', '', 20);
-$pdf->Write(10, "Work Experience");
-/**
- * @param $pdf
- */
-function addExperience($pdf, $params)
-{
-
-    $pdf->Ln(16);
-    $pdf->SetFont('Arial', '', 20);
-    $pdf->Write(10, $params['company']);
-    $pdf->SetFont('Arial', '', 12);
-    $pdf->Write(10, "                        ");
-    $pdf->Write(10, $params['time']);
-    $pdf->Ln(10);
-    $pdf->Write(10, "Main responsibilities:");
-    $pdf->Ln(10);
-    $pdf->SetFont('Arial', '', 12);
-    $vicomageText = $params['context'];
-    $pdf->SetFont('Arial', '', 12);
-    $pdf->MultiCell(140, 6, $vicomageText, 0, 'L', false);
-}
-
-$params = [
-    'company' => 'Vicomage',
-    'time' => 'May 2018 - October 2018',
-    'context' =>  'Working with foreigner customer. At that time, I was a web developer with skills PHP(Laravel Framework), Javascript(Jquery, Knockoutjs), Flatform(Magento 1 + 2), CMS(Wordpress). Here, almost tasks are collecting requirements, discussion with customers, technology suggestions to streamline  the work, develop company\'s idea to market segments to test ideas in real context. Especially, I have chance to study and work with new technologies to achieve possible approachs for product environment. They are really challenge for me but i really enjoy to do them. Js is my programming language\'s favorite. Becoming a JS full stack developer is my desire, I\'m try my best to make it out.'
-];
-
-addExperience($pdf, $params);
-
-$pdf->Ln(12);
-
-$pdf->SetFillColor(153, 153, 102); // #999966
-$pdf->SetTextColor(255, 255, 255);
-$pdf->Cell(145, 238, "", 0, 0, 'L', true);
-
-$pdf->SetFillColor(153, 102, 51); // #999966
-$pdf->SetTextColor(255, 255, 255);
-
-$pdf->Cell(46, 238, "", 0, 0, 'L', true);
-$params = [
-    'company' => 'Wsoftpro',
-    'time' => 'May 2017 - May 2018',
-    'context' =>  'Working with foreigner customer. At that time, I was a web developer with skills PHP(Laravel Framework), Javascript(Jquery), CMS(Wordpress), Flatform(Magento 1).'
-];
-
-addExperience($pdf, $params);
-$pdf->Ln(12);
-
-$params = [
-    'company' => 'Osworlds',
-    'time' => 'August 2016 - May 2017',
-    'context' =>  'Working with foreigner customer. At that time, I was a web developer with skills PHP(Laravel Framework), Javascript(Jquery), CMS(Wordpress), Flatform(Magento 1).'
-];
-
-addExperience($pdf, $params);
-
-// Create the left header cell
-$pdf->SetFont('Arial', 'B', 15);
-$pdf->SetTextColor($tableHeaderLeftTextColour[0], $tableHeaderLeftTextColour[1], $tableHeaderLeftTextColour[2]);
-
-
-/***
- * Serve the PDF
- ***/
-
-$pdf->Output("PHP_NguyenHongQuan.pdf", "I");
-
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <title>One Page Resume</title>
+
+    <style type="text/css">
+        * { margin: 0; padding: 0; }
+        body { font: 16px Helvetica, Sans-Serif; line-height: 24px; background: url(images/noise.jpg); }
+        .clear { clear: both; }
+        #page-wrap { width: 800px; margin: 40px auto 60px; }
+        #pic { float: right; margin: -30px 0 0 0; }
+        h1 { margin: 0 0 16px 0; padding: 0 0 16px 0; font-size: 42px; font-weight: bold; letter-spacing: -2px; border-bottom: 1px solid #999; }
+        h2 { font-size: 20px; margin: 0 0 6px 0; position: relative; }
+        h2 span { bottom: 0; right: 0; font-style: italic; font-family: Georgia, Serif; font-size: 16px; color: #999; font-weight: normal; }
+        p { margin: 0 0 16px 0; }
+        a { color: #999; text-decoration: none; border-bottom: 1px dotted #999; }
+        a:hover { border-bottom-style: solid; color: black; }
+        ul { margin: 0 0 32px 17px; }
+        #objective { width: 500px; float: left; }
+        #objective p { font-family: Georgia, Serif; font-style: italic; color: #666; }
+        dt { font-style: italic; font-weight: bold; font-size: 18px; text-align: right; padding: 0 26px 0 0; width: 150px; float: left; height: 100px; border-right: 1px solid #999;  }
+        dd { width: 600px; float: right; }
+        dd.clear { float: none; margin: 0; height: 15px; }
+    </style>
+</head>
+
+<body>
+<h2><a href="dompdf.php">Download</a></h2>
+<div id="page-wrap">
+
+    <img src="images/cthulu.png" alt="Photo of Cthulu" id="pic" />
+
+    <div id="contact-info" class="vcard">
+
+        <!-- Microformats! -->
+
+        <h1 class="fn">Nguyen Hong Quan</h1>
+
+        <p>
+            Cell: <span class="tel">0163.822.3625</span><br />
+            Email: <a class="email" href="mailto:quannguyen1456@gmail.com">quannguyen1456@gmail.com</a>
+        </p>
+    </div>
+
+    <div id="objective">
+        <p>
+            To be a good staff. Try to learning as much as possible and doing my best in order to accompish my task. To have good opportunities to get promotion in my job. Develop my skills with development of company, I always want to prove myself
+        </p>
+    </div>
+
+    <div class="clear"></div>
+
+    <dl>
+        <dd class="clear"></dd>
+
+        <dt>Education</dt>
+        <dd>
+            <h2>Faculty of Computer Science and Engineering - ThuyLoi University</h2>
+            <p><strong>Major:</strong> Software Engineering<br />
+        </dd>
+
+        <dd class="clear"></dd>
+
+        <dt>Skills</dt>
+        <dd>
+            <h2>Computer skills</h2>
+            <p>Magento, Javascript(Jquery, Knockoutjs), Linux, Git, Laravel, Mysql, Wordpress</p>
+        </dd>
+
+        <dd class="clear"></dd>
+
+        <dt>Experience</dt>
+        <dd>
+            <h2>Vicomage <span>PHP Developer - Ha Noi - May 2018- October 2018</span></h2>
+            <ul>
+                <li>Working with foreigner customer. At that time, I was a web developer with skills Javascript(Jquery, Knockoutjs), Flatform(Magento 1 + 2), CMS(Wordpress), PHP(Laravel Framework). Here, almost tasks are collecting requirements, discussion with customers, technology suggestions to streamline  the work, develop company's idea to market segments to test ideas in real context. Especially, I have chance to study and work with new technologies to achieve possible approachs for outsource environment. They are really challenge for me but i really enjoy to do them. Js is my programming language's favorite. Becoming a JS full stack developer is my desire, I'm try my best to make it out.</li>
+
+            </ul>
+
+            <h2>Wsoftpro <span>PHP Developer - Ha Noi - May 2017 - May 2018</span></h2>
+            <ul>
+                <li>Working with foreigner customer. At that time, I was a web developer with skills Javascript(Jquery), CMS(Wordpress), Flatform(Magento 1), PHP(Laravel Framework).</li>
+            </ul>
+            <h2>Osworlds <span>PHP Developer - Ha Noi - August 2016- May 2017</span></h2>
+            <ul>
+                <li>Working with foreigner customer. At that time, I was a web developer with skills Javascript(Jquery), CMS(Wordpress), Flatform(Magento 1), PHP(Laravel Framework).</li>
+            </ul>
+        </dd>
+
+        <dd class="clear"></dd>
+
+        <dt>Hobbies</dt>
+        <dd>Study, Play game, Listen music</dd>
+
+        <dd class="clear"></dd>
+
+        <dt>References</dt>
+        <dd>Available on request</dd>
+
+        <dd class="clear"></dd>
+    </dl>
+
+    <div class="clear"></div>
+
+</div>
+
+</body>
+
+</html>
